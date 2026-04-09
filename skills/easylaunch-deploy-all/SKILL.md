@@ -1,19 +1,21 @@
 ---
 name: easylaunch-deploy-all
-description: Deploy frontend, backend, or fullstack projects end-to-end on EasyLaunch (optional Postgres, build image, deploy backend, wire frontend env, deploy frontend; auto-fix and retry on errors).
+description: Deploy containerized backend (Dockerfile) or static frontend to EasyLaunch (auto-detect, optional Postgres, build image, deploy; auto-fix and retry on errors).
 ---
 
 # Deploy All (EasyLaunch)
 
 Deploy a project end-to-end on EasyLaunch with minimal user input:
 
-- Detect whether the current project contains a **frontend**, a **backend**, or **both**
+- Detect project type: **containerized backend** (Dockerfile present) or **static frontend** (no Dockerfile)
 - Optionally provision Postgres and wire the connection into the backend
 - Build and push a backend image (write a `Dockerfile` first if missing)
-- Deploy the backend
-- Wire the frontend to the backend URL via `.env` (default: `VITE_API_BASE_URL`)
-- Deploy the frontend
+- Deploy the backend service
 - Retry on errors after applying targeted fixes, until success
+
+**Important distinction:**
+- If `Dockerfile` exists → **Backend service** (even if it's Next.js/NUXT with SSR, it's deployed as a single container)
+- If no `Dockerfile` → **Static frontend** (use `deploy-frontend`)
 
 ## Step 1 — Get `appId`
 
@@ -37,14 +39,33 @@ Skills do not bundle OS-specific binaries. From the plugin repository root:
 
 Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easylaunch-cli` / `%USERPROFILE%\\.easylaunch\\bin\\easylaunch-cli.exe`.
 
-## Step 3 — Detect project shape (frontend / backend / fullstack)
+## Step 3 — Detect project type
 
 Work from the **current project directory** and inspect the repository.
 
-### Frontend detection (any is enough)
+### Decision tree
+
+1. **Does a `Dockerfile` exist** (in current dir or subdirs like `api/`, `backend/`)?
+   - **YES** → **Containerized Backend** (deploy via `build-image` + `deploy-backend`)
+   - **NO** → **Static Frontend** (deploy via `deploy-frontend`)
+
+### Backend detection (Dockerfile exists)
+
+**Backend root directory selection** (choose the first match):
+
+1. Current directory contains `Dockerfile`
+2. `api/` if it contains a `Dockerfile`
+3. `backend/` if it contains a `Dockerfile`
+4. Ask only if still ambiguous (rare)
+
+**Framework detection** (for context only, deployment is still via Dockerfile):
+- Go: `go.mod` exists
+- Node: `package.json` exists with `express`, `fastify`, `nestjs`, `next`, `nuxt`, etc.
+
+### Static Frontend detection (no Dockerfile)
 
 - `package.json` exists and has `scripts.build`
-- Dependencies indicate a frontend framework: `vite`, `react-scripts`, `next`, `nuxt`, `sveltekit`, `astro`, `gatsby`
+- Dependencies indicate a frontend framework: `vite`, `react-scripts`, `next` (static export), `nuxt`, `sveltekit`, `astro`, `gatsby`
 - Vite config exists: `vite.config.*`
 
 **Frontend root directory selection** (choose the first match):
@@ -52,19 +73,6 @@ Work from the **current project directory** and inspect the repository.
 1. Current directory contains `package.json` + `scripts.build`
 2. `web/package.json` + `scripts.build`
 3. `frontend/package.json` + `scripts.build`
-4. Ask only if still ambiguous (rare)
-
-### Backend detection (any is enough)
-
-- `Dockerfile` exists (in current dir or common subdirs like `api/`, `backend/`)
-- Go backend: `go.mod` exists + `cmd/` or `main.go`
-- Node backend: `package.json` exists + `scripts.start` (or `scripts.dev`) and backend deps such as `express`, `fastify`, `nestjs`, `koa`, `hono`
-
-**Backend root directory selection** (choose the first match):
-
-1. A directory containing a `Dockerfile` (prefer current dir)
-2. `api/` if it contains a `Dockerfile` or backend entrypoints
-3. `backend/` if it contains a `Dockerfile` or backend entrypoints
 4. Ask only if still ambiguous (rare)
 
 ## Step 4 — Decide whether a database is needed, and provision it if so
@@ -90,7 +98,7 @@ Parse the output into env pairs and use them as follows:
 
 Avoid writing secrets into git-tracked files by default.
 
-## Step 5 — If backend exists: ensure a `Dockerfile`, then build & push image
+## Step 5 — If project is containerized backend: ensure a `Dockerfile`, then build & push image
 
 ### If there is no `Dockerfile`
 
@@ -142,7 +150,7 @@ Stop only once build succeeds and you have the printed line:
 
 - `Image URL: ...`
 
-## Step 6 — If backend exists: deploy backend (retry until success)
+## Step 6 — Deploy backend (retry until success)
 
 Infer `--port` from the backend:
 
@@ -171,35 +179,9 @@ Capture:
 
 - Backend `Service URL: ...`
 
-## Step 7 — If frontend exists: wire frontend to backend URL via `.env`
+## Step 7 — If project is static frontend: deploy frontend (retry until success)
 
-Preferred approach: write/patch frontend env files (no proxy config edits by default).
-
-### Determine which env key(s) to set
-
-- Vite: `VITE_API_BASE_URL=<backendServiceUrl>`
-- CRA: `REACT_APP_API_BASE_URL=<backendServiceUrl>`
-- Next.js: `NEXT_PUBLIC_API_BASE_URL=<backendServiceUrl>`
-
-Default to **Vite key** if uncertain.
-
-### Which files to edit
-
-Prefer editing existing files in this order:
-
-1. `.env.production` (if deploying production)
-2. `.env` (general)
-3. create `.env.production` if none exist
-
-Only change the minimal lines needed to set/update the API base URL.
-
-### What “wiring” means (guidance)
-
-- If the frontend already calls a relative `/api/...` path, you may only need to set `VITE_API_BASE_URL` to the backend origin and ensure the request builder uses it.
-- If the frontend hardcodes a host, replace it with the env key you set above.
-- Keep the value as a full origin, e.g. `https://<backend-service-host>` (no trailing slash is preferred).
-
-## Step 8 — If frontend exists: deploy frontend (retry until success)
+Only run this step if **no Dockerfile exists** (static site deployment).
 
 Run from the frontend root directory so `--dir` is not needed:
 
@@ -223,11 +205,9 @@ Capture:
 
 - Frontend `Service URL: ...`
 
-## Step 9 — Final output (always show)
+## Step 8 — Final output (always show)
 
 At the end, present:
 
-- **Frontend Service URL** (if frontend deployed)
-- **Backend Service URL** (if backend deployed)
-- **Image URL** (if backend built)
-
+- **Service URL** (backend or frontend, depending on project type)
+- **Image URL** (if containerized backend was built)
