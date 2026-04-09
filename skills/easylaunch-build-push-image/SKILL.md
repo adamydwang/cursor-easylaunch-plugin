@@ -42,6 +42,48 @@ Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easyla
 
 Commands that require an account check login first. If you are not signed in, **`easylaunch-cli` interactively prompts for your username/email and password**—no extra endpoint or config step. Running `easylaunch-cli login` up front is optional.
 
+## Linux deployment note (Dockerfile / Windows scripts)
+
+EasyLaunch backend deployments run in a **Linux container**.
+
+If the current project **is not a static site** and needs a server process, but:
+
+- there is **no `Dockerfile`**, or
+- the provided start script is **Windows-only** (e.g. `.ps1`, `.bat`, `powershell`, `cmd.exe`, or `set VAR=... &&`),
+
+then you must prepare Linux-compatible artifacts before building:
+
+- **Create a `Dockerfile`** in the backend root directory.
+- **Create `scripts/start.sh`** (Linux/posix) as the equivalent startup entrypoint, and have the container use it.
+
+### Windows-only start script indicators
+
+- `package.json` `scripts.start` / `scripts.dev` contains: `powershell`, `cmd.exe`, `*.ps1`, `*.bat`, `set VAR=... &&`
+- Repository includes only `start.ps1` / `start.bat` and no Linux alternative
+
+### `scripts/start.sh` contract
+
+- Must run on Linux (POSIX shell) and be executable: `chmod +x scripts/start.sh`
+- Must start the server in the **foreground** (no daemonizing)
+- Use POSIX env syntax (e.g. `export KEY=value`)
+
+Minimal example (Node):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec npm run start
+```
+
+In the Dockerfile, use it as the entrypoint:
+
+```dockerfile
+COPY scripts/start.sh /app/scripts/start.sh
+RUN chmod +x /app/scripts/start.sh
+CMD [\"bash\", \"/app/scripts/start.sh\"]
+```
+
 Run **`build-image`** from the directory that contains your `api/` (or other build context)—the CLI uploads that path.
 
 Below, **`easylaunch-cli`** means that installed binary (same flags).

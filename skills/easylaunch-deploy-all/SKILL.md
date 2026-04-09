@@ -7,7 +7,7 @@ description: Deploy containerized backend (Dockerfile) or static frontend to Eas
 
 Deploy a project end-to-end on EasyLaunch with minimal user input:
 
-- Detect project type: **containerized backend** (Dockerfile present) or **static frontend** (no Dockerfile)
+- Detect project type: **containerized app** (Dockerfile present OR app needs a Linux server process) or **static frontend** (pure static build output)
 - Optionally provision Postgres and wire the connection into the backend
 - Build and push a backend image (write a `Dockerfile` first if missing)
 - Deploy the backend service
@@ -15,7 +15,7 @@ Deploy a project end-to-end on EasyLaunch with minimal user input:
 
 **Important distinction:**
 - If `Dockerfile` exists → **Backend service** (even if it's Next.js/NUXT with SSR, it's deployed as a single container)
-- If no `Dockerfile` → **Static frontend** (use `deploy-frontend`)
+- If no `Dockerfile` → **Static frontend** only when it is truly static; otherwise you must **containerize** first
 
 ## Step 1 — Get `appId`
 
@@ -47,7 +47,10 @@ Work from the **current project directory** and inspect the repository.
 
 1. **Does a `Dockerfile` exist** (in current dir or subdirs like `api/`, `backend/`)?
    - **YES** → **Containerized Backend** (deploy via `build-image` + `deploy-backend`)
-   - **NO** → **Static Frontend** (deploy via `deploy-frontend`)
+   - **NO** → continue
+2. **Is the project truly static** (build produces only static files and there is no server runtime needed)?
+   - **YES** → **Static Frontend** (deploy via `deploy-frontend`)
+   - **NO / unclear** → **Needs containerization**: create a `Dockerfile` + Linux start script, then deploy as backend container
 
 ### Backend detection (Dockerfile exists)
 
@@ -67,6 +70,11 @@ Work from the **current project directory** and inspect the repository.
 - `package.json` exists and has `scripts.build`
 - Dependencies indicate a frontend framework: `vite`, `react-scripts`, `next` (static export), `nuxt`, `sveltekit`, `astro`, `gatsby`
 - Vite config exists: `vite.config.*`
+
+Static-only indicators:
+
+- Vite/CRA/Astro/Gatsby without SSR/server entrypoint
+- Next.js only when configured for static export (otherwise treat as containerized app)
 
 **Frontend root directory selection** (choose the first match):
 
@@ -103,6 +111,37 @@ Avoid writing secrets into git-tracked files by default.
 ### If there is no `Dockerfile`
 
 Create one in the backend root directory.
+
+EasyLaunch deploys to a **Linux** environment. If the repository’s start command is Windows-only, you must also create a Linux-equivalent startup script.
+
+#### Windows-only start script indicators
+
+- `package.json` `scripts.start` / `scripts.dev` uses `powershell`, `cmd.exe`, `*.ps1`, `*.bat`, or `set VAR=... &&`
+- Only `start.ps1` / `start.bat` exists with no `.sh` alternative
+
+#### Linux startup script (`scripts/start.sh`)
+
+Create `scripts/start.sh` and ensure it works in Linux:
+
+- `chmod +x scripts/start.sh`
+- starts the server in the foreground
+- uses POSIX env syntax (`export KEY=value`)
+
+Minimal example (Node):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+exec npm run start
+```
+
+In the Dockerfile, prefer:
+
+```dockerfile
+COPY scripts/start.sh /app/scripts/start.sh
+RUN chmod +x /app/scripts/start.sh
+CMD ["bash", "/app/scripts/start.sh"]
+```
 
 Pick the template based on detected backend type:
 
