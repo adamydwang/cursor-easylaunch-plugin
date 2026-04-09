@@ -1,0 +1,21 @@
+{
+  "name": "easylaunch",
+  "displayName": "EasyLaunch",
+  "version": "1.0.0",
+  "description": "EasyLaunch skills and scripts: deploy frontends/backends, build images, manage Postgres. CLI is fetched automatically for your OS (no per-platform skill packs).",
+  "author": {
+    "name": "EasyLaunch",
+    "email": "adam@easylaunch.cloud"
+  },
+  "license": "MIT",
+  "keywords": [
+    "easylaunch",
+    "deploy",
+    "docker",
+    "postgresql",
+    "static-site",
+    "cli"
+  ],
+  "logo": "assets/logo.svg",
+  "homepage": "https://easylaunch.aimos.cloud"
+}
