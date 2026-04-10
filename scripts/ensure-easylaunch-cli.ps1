@@ -6,7 +6,7 @@ try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::
 
 $BASE = "https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli"
 $platform = "windows-amd64"
-$url = "$BASE/$platform/easylaunch-cli"
+$url = "$BASE/$platform/easylaunch-cli.exe"
 
 $destDir = Join-Path $env:USERPROFILE ".easylaunch\bin"
 $dest = Join-Path $destDir "easylaunch-cli.exe"
@@ -35,4 +35,4 @@ Write-Host "EasyLaunch CLI installed at:"
 Write-Host $dest
 Write-Host ""
 Write-Host "PowerShell (current session):"
-Write-Host ("  $env:EASYLAUNCH_CLI = `"{0}`"" -f $dest)
+Write-Host ('  $env:EASYLAUNCH_CLI = "{0}"' -f $dest)
