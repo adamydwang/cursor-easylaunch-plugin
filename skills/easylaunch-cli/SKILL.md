@@ -25,7 +25,7 @@ Replace `{platform}` with one of:
 
 ## Recommended: bundled ensure script
 
-From the **plugin repository root** (the folder that contains `scripts/ensure-easylaunch-cli.mjs`—this is what you publish to Git / install from the marketplace):
+From the **plugin repository root** (the folder that contains the `scripts/` directory—this is what you publish to Git / install from the marketplace):
 
 **macOS / Linux (no Node required):**
 
@@ -37,12 +37,6 @@ bash scripts/ensure-easylaunch-cli.sh
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/ensure-easylaunch-cli.ps1
-```
-
-**Optional (requires Node 18+):**
-
-```bash
-node scripts/ensure-easylaunch-cli.mjs
 ```
 
 After a **Cursor plugin install**, run the same command from the plugin’s on-disk root (where `.cursor-plugin/plugin.json` lives).

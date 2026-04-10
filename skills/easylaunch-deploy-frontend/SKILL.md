@@ -32,10 +32,6 @@ Skills **do not** ship OS-specific binaries. Before first use, run **`easylaunch
 
 `powershell -ExecutionPolicy Bypass -File scripts/ensure-easylaunch-cli.ps1`
 
-**Optional (requires Node 18+):**
-
-`node scripts/ensure-easylaunch-cli.mjs`
-
 Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easylaunch-cli` / `%USERPROFILE%\.easylaunch\bin\easylaunch-cli.exe`. See **`easylaunch-cli`** for download URLs and manual `curl`/PowerShell examples.
 
 ## Authentication

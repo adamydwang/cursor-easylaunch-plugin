@@ -35,8 +35,6 @@ Skills do not bundle OS-specific binaries. From the plugin repository root:
 
 `powershell -ExecutionPolicy Bypass -File scripts/ensure-easylaunch-cli.ps1`
 
-(Node 18+ `node scripts/ensure-easylaunch-cli.mjs` is optional.)
-
 Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easylaunch-cli` / `%USERPROFILE%\\.easylaunch\\bin\\easylaunch-cli.exe`.
 
 ## Step 3 — Detect project type
