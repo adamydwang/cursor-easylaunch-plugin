@@ -36,3 +36,6 @@ Write-Host $dest
 Write-Host ""
 Write-Host "PowerShell (current session):"
 Write-Host ('  $env:EASYLAUNCH_CLI = "{0}"' -f $dest)
+Write-Host ""
+Write-Host "PowerShell (current session, optional):"
+Write-Host ('  $env:PATH = "{0};$env:PATH"' -f $destDir)

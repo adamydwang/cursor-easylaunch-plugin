@@ -23,6 +23,10 @@ Replace `{platform}` with one of:
 | `linux-amd64`  | Linux x86_64                             |
 | `windows-amd64`| 64-bit Windows (x64 or arm64 host)      |
 
+**Windows exception:** the OSS filename includes an `.exe` suffix:
+
+`https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli/windows-amd64/easylaunch-cli.exe`
+
 ## Recommended: bundled ensure script
 
 From the **plugin repository root** (the folder that contains the `scripts/` directory—this is what you publish to Git / install from the marketplace):
@@ -72,7 +76,7 @@ export EASYLAUNCH_CLI="$HOME/.easylaunch/bin/easylaunch-cli"
 
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.easylaunch\bin" | Out-Null
-Invoke-WebRequest "https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli/windows-amd64/easylaunch-cli" -OutFile "$env:USERPROFILE\.easylaunch\bin\easylaunch-cli.exe"
+Invoke-WebRequest "https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli/windows-amd64/easylaunch-cli.exe" -OutFile "$env:USERPROFILE\.easylaunch\bin\easylaunch-cli.exe"
 $env:EASYLAUNCH_CLI = "$env:USERPROFILE\.easylaunch\bin\easylaunch-cli.exe"
 ```
 
@@ -88,7 +92,15 @@ In documentation below, **`easylaunch-cli`** means whichever resolved executable
 
 ## Authentication
 
-After installation, run any command that needs an account (or optionally `easylaunch-cli login` first). The CLI **detects whether you are logged in**; if not, it **prompts interactively** for your username/email and password. No separate API endpoint setup is required.
+Check whether you are signed in (non-interactive):
+
+`easylaunch-cli auth status`
+
+If it prints `NOT_LOGGED_IN`, run interactive login in your terminal:
+
+`easylaunch-cli login`
+
+After login, rerun your original command.
 
 ## Related skills
 

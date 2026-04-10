@@ -1,8 +1,22 @@
 # EasyLaunch (Cursor plugin)
 
-Agent skills for deploying frontends and backends on [EasyLaunch](https://easylaunch.online). The plugin **does not** bundle OS-specific CLI binaries; run `scripts/ensure-easylaunch-cli.mjs` (Node 18+) or follow the **`easylaunch-cli`** skill to download the correct build from:
+Agent skills for deploying frontends and backends on [EasyLaunch](https://easylaunch.online). The plugin **does not** bundle OS-specific CLI binaries; use the bundled ensure scripts (recommended) or follow the **`easylaunch-cli`** skill to download the correct build from OSS:
 
 `https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli/<platform>/easylaunch-cli`
+
+Windows uses an `.exe` filename:
+
+`https://little-two-packages.oss-cn-hongkong.aliyuncs.com/cli/windows-amd64/easylaunch-cli.exe`
+
+### Install / update the CLI (recommended)
+
+- **macOS / Linux:**
+
+`bash scripts/ensure-easylaunch-cli.sh`
+
+- **Windows (PowerShell):**
+
+`powershell -ExecutionPolicy Bypass -File scripts/ensure-easylaunch-cli.ps1`
 
 ## Local test
 

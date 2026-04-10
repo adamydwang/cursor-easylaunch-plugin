@@ -37,6 +37,18 @@ Skills do not bundle OS-specific binaries. From the plugin repository root:
 
 Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easylaunch-cli` / `%USERPROFILE%\\.easylaunch\\bin\\easylaunch-cli.exe`.
 
+## Step 2.5 — Ensure you are signed in
+
+Verify sign-in status (non-interactive):
+
+`easylaunch-cli auth status`
+
+If it prints `NOT_LOGGED_IN`, run interactive login in your terminal:
+
+`easylaunch-cli login`
+
+Then continue the deploy steps.
+
 ## Step 3 — Detect project type
 
 Work from the **current project directory** and inspect the repository.

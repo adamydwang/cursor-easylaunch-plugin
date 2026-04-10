@@ -36,7 +36,15 @@ Then invoke with **`$EASYLAUNCH_CLI`**, **`PATH`**, or `~/.easylaunch/bin/easyla
 
 ## Authentication
 
-Commands that require an account check login first. If you are not signed in, **`easylaunch-cli` interactively prompts for your username/email and password**—no extra endpoint or config step. Running `easylaunch-cli login` up front is optional.
+Before running this skill, verify you are signed in (non-interactive):
+
+`easylaunch-cli auth status`
+
+If it prints `NOT_LOGGED_IN`, run interactive login in your terminal:
+
+`easylaunch-cli login`
+
+Then rerun the command for this skill.
 
 ## Linux deployment note (Dockerfile / Windows scripts)
 
