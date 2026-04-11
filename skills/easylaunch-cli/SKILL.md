@@ -1,11 +1,20 @@
 ---
 name: easylaunch-cli
-description: Install or update the EasyLaunch CLI for the current machine (downloads the correct binary from OSS; use before other easylaunch-* skills).
+description: Install or update the EasyLaunch CLI for the current machine (OSS binary per OS; use before other easylaunch-* skills). Read “EasyLaunch cloud runtime vs your laptop” here—EasyLaunch cloud runs Linux.
 ---
 
 # EasyLaunch CLI (install / update)
 
 Use this skill **before** running any **`easylaunch-*`** workflow skill when the CLI might be missing or outdated. Skills **do not** bundle OS-specific binaries; one plugin works on all supported platforms.
+
+## EasyLaunch cloud runtime vs your laptop
+
+| Dimension | What to assume |
+|-----------|----------------|
+| **Your machine** | Windows, macOS, or Linux—all supported for **installing and running the CLI** and for **local development**. |
+| **EasyLaunch cloud** | **Linux** for deploy paths: **backend containers** are Linux, and **cloud pipelines** (`build-image`, `deploy-frontend`) run builds on **Linux** (Dockerfile, `npm run build`, etc.). |
+| **Rules for agents** | Anything that **runs on EasyLaunch**—`Dockerfile` `CMD`/`ENTRYPOINT`, production start scripts, and **`package.json` scripts used only in cloud builds**—must be **POSIX / normal Linux**. Do **not** use `.bat`, `.ps1`, `cmd`, or `powershell` as the cloud/deploy path. |
+| **Details** | **`easylaunch-build-push-image`** (Linux deployment note) and **`easylaunch-deploy-all`** Step 5 (`scripts/start.sh`, Windows-only indicators). |
 
 ## Download URL (authoritative)
 

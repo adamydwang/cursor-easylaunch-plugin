@@ -1,6 +1,6 @@
 ---
 name: easylaunch-deploy-frontend
-description: Deploy a frontend static site to EasyLaunch (pack, cloud build, OSS + HTTPS)
+description: Deploy a frontend static site to EasyLaunch (pack, cloud build, OSS + HTTPS). Cloud build runs Linux.
 ---
 
 # Deploy Frontend (EasyLaunch)
@@ -64,6 +64,10 @@ Then rerun the command for this skill.
 
 1. Package and upload source.
 2. Cloud pipeline: install dependencies, run the build, publish artifacts to static hosting (OSS), wire DNS and HTTPS.
+
+## Cloud build environment (Linux)
+
+The pipeline runs **`--build-cmd` on Linux**. `package.json` `scripts.build` must not depend on Windows-only commands, paths, or binaries. If the repo only wraps the build in `.ps1` / `.bat`, use a cross-platform command (e.g. `npm run build`) or add Linux-equivalent steps. See **`easylaunch-cli`** (“EasyLaunch cloud runtime vs your laptop”).
 
 ## Recommended example
 

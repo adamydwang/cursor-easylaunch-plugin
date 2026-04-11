@@ -1,9 +1,11 @@
 ---
 name: easylaunch-deploy-all
-description: Deploy containerized backend (Dockerfile) or static frontend to EasyLaunch (auto-detect, optional Postgres, build image, deploy; auto-fix and retry on errors).
+description: Deploy containerized backend (Dockerfile) or static frontend to EasyLaunch (auto-detect, optional Postgres, build image, deploy; auto-fix and retry on errors). Cloud runs Linux.
 ---
 
 # Deploy All (EasyLaunch)
+
+**Cloud runtime (read first):** EasyLaunch runs **backend workloads in Linux containers** and runs **cloud builds on Linux** (image builds and static-site pipelines). The user’s laptop may be Windows—treat `.bat` / `.ps1` / PowerShell as **local dev only** unless the user explicitly wants local-only automation. For container entrypoints and cloud-facing start/build commands, use **POSIX/Linux** (see Step 5 and **`easylaunch-build-push-image`**; overview in **`easylaunch-cli`**).
 
 Deploy a project end-to-end on EasyLaunch with minimal user input:
 

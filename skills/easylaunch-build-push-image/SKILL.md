@@ -1,6 +1,6 @@
 ---
 name: easylaunch-build-push-image
-description: Build a Docker image on EasyLaunch (cloud pipeline) and push to Docker Hub
+description: Build a Docker image on EasyLaunch (cloud pipeline) and push to Docker Hub. Cloud runs Linux.
 ---
 
 # Build / Push Image (EasyLaunch)
@@ -48,7 +48,7 @@ Then rerun the command for this skill.
 
 ## Linux deployment note (Dockerfile / Windows scripts)
 
-EasyLaunch backend deployments run in a **Linux container**.
+**Your laptop can be any OS; EasyLaunch backend images run on Linux.** Backend deployments use **Linux containers**.
 
 If the current project **is not a static site** and needs a server process, but:
 
@@ -85,7 +85,7 @@ In the Dockerfile, use it as the entrypoint:
 ```dockerfile
 COPY scripts/start.sh /app/scripts/start.sh
 RUN chmod +x /app/scripts/start.sh
-CMD [\"bash\", \"/app/scripts/start.sh\"]
+CMD ["bash", "/app/scripts/start.sh"]
 ```
 
 Run **`build-image`** from the directory that contains your `api/` (or other build context)—the CLI uploads that path.

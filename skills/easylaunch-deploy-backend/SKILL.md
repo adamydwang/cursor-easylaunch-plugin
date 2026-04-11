@@ -1,11 +1,13 @@
 ---
 name: easylaunch-deploy-backend
-description: Deploy a backend on EasyLaunch using an existing Docker image (--image-url)
+description: Deploy a backend on EasyLaunch using an existing Docker image (--image-url). Container runtime is Linux.
 ---
 
 # Deploy Backend (EasyLaunch)
 
 Deploy a backend from an **image that is already built** (**no source upload** for this step).
+
+The **running container is Linux**. When debugging startup failures, verify Linux paths, `shebang`s, and that `CMD`/`ENTRYPOINT` match what was built into the image (see **`easylaunch-cli`** runtime note and **`easylaunch-build-push-image`**).
 
 ## Parameter sourcing (agent)
 
